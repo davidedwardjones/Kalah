@@ -1,0 +1,67 @@
+COMP34120 – AI and Games
+Project 1
+Overview
+Your task is to make a program (or “bot”) which plays the game Kalah. In particular, your agent will play the 7,7 version of Kalah; the board contains 7 wells per side and each well starts with 7 seeds. Your bot will be entered in a tournament  against all the other bots developed by your fellow students.  Your goal is to make a bot which plays the game well (e.g. will beat other players), but bots will also be judged on speed of decision-making and the quality of the ideas used.
+
+Schedule
+·         Week of November 11 (Week 8):  Tell us what you plan to do, and how you plan to divide up the tasks among members of the group.
+·         Week of December 9 (Week 12): Group presentations telling us what you have done.
+·         Midnight between Friday, December 13 and Saturday, December 14: Deadline to submit your bot.
+
+Scheduled meeting times are Tuesday 12-1 (Collab) and Thursday 10-11 (Collab 2), but you are only required to attend in week 8 long enough to tell us your plan, and week 12 for the presentations.  (We will schedule other presentation slots closer to the time.) Other booked times are for help sessions.
+
+The Game
+Description of the game including the rules can be found here. We are using standard rules   http://wikimanqala.org/wiki/Kalah, except we are also using the pie rule, which is a way to remove any first player advantage which might exist.
+
+Resources
+The game engine is found in /opt/info/courses/COMP34120/2013 and is called ManKalah.jar. The usage is:
+
+java -jar ManKalah.jar <agent1> <agent2>
+
+where <agent1> and <agent2> are programs which play the game. These could both be your bot, for example, or one could be yours and one could be one of your friends.  We provide you with one agent, called  MKRefAgent.jar.
+
+The game-playing agents interact with the game engine via a protocol which is described informally in /opt/info/courses/COMP34120/2013/doc/Protocol-info.txt, and in Backus-Naur form in /opt/info/courses/COMP34120/2013/doc/protocol.txt.
+
+One way to test your knowledge of the protocol is to play the game against the reference agent. You could do this as follows:
+
+1.       Open a window (e.g. using xterm) and type in this window 
+nc -l localhost 12345
+
+2.       Start the game engine
+
+java -jar ManKalah.jar "nc localhost 12345" "java -jar MKRefAgent.jar"
+
+You can play in the xterm against the provided agent (who you will probably be able to beat) and you will have to use the protocol commands to communicate with the game engine.  Likewise, you can play two humans against each other by providing different ports (type nc –l localhost 12345 in one window and nc –l localhost 12346 in the other), or play MKRefAgent against itself in the obvious way.
+
+The game engine contains a time-out mechanism which will end the game when one agent is taking too long (to avoid infinite loops). When this happens, the other agent is declared winner. The time-out period is one hour. The game engine also ends the game when one agent attempts an illegal move or sends an illegal message.  
+
+For java programmers, we provide some relevant classes in  /opt/info/courses/COMP34120/2013/src and the javadoc in in /opt/info/courses/COMP34120/2013/doc. However, you are free to do this in any language which you choose.
+
+Use of the WIKI
+Each group has been set up with a WIKI on Moodle. You must use this to document your ideas and work. Specifically,
+
+Each individual must document their contribution to the work. The best way is to keep a journal (on the WIKI) which you update periodically outlining what you have done.
+There needs to be a description of the method used in the programme you submit. You could also document ideas or explorations which did not make it into the final submission. This could be in the form of a group journal which is updated periodically, or a report written at the end.
+We will use this as part of the assessment, to determine the extent of each group member’s contribution to their project. Of course, you can also use the WIKI for communication within the group; this will not be assessed. For code sharing, you can use subversion if you wish.
+Getting help
+The best way to ask questions is to use the forum on Moodle associated with this course. This way, both the questions and answers can be shared with all the students.
+
+We will also be available to give help during the scheduled lecture/lab times, but it would be helpful to tell us in advanced what kind of help you need (game theory, algorithms, programming).  You can do this by making a request on the forum.
+
+Assessment
+We remind you of the assessment we announced during the first lecture.
+
+1.       This project counts 30% of your final mark.
+2.       15% comes from the content of the approach. How good was the idea, how well-informed by the content of the course, outside literature, etc.
+3.       15% comes from the performance of the approach – how well does it play and how quickly does it play.
+4.       The group mark will be distributed to the members of the group using: self-assessment, contribution to the WIKI and demonstration of knowledge during the presentation.
+
+The presentation
+During the last week of term, all groups will make a presentation to the lecturers and the other groups. It is important that every member of the group speak and answer questions, so we can gauge the contributions of the members of the group. None of the marking will be based on presentation skills, so you need not make a polished presentation. The assessment is entirely on content: what your group did and what you learned from doing it.
+
+Submission
+Submission will be through Moodle. You need to submit three files. 1) An single executable file which can attach to the game engine. 2) A readme.txt file with instructions telling how to execute (e.g. what string to send to the game engine. 3) A zipped (or gzipped) archive of the source code.
+
+ 
+
+ 
