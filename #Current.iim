@@ -1,7 +1,4 @@
-﻿VERSION BUILD=8530828 RECORDER=FX
-TAB T=1
-URL GOTO=https://docs.google.com/spreadsheet/ccc?key=0Api6arJ9VxRPdGxMMXNjZ21nOUZ0V1NyOHRGbmpPWFE#gid=0
-EVENT TYPE=CLICK SELECTOR="#\\30 -r-column-head-section\\$5289>TD:nth-of-type(2)" BUTTON=0
+asdfasegasdfdsa
 EVENTS TYPE=KEYPRESS SELECTOR="HTML>BODY>DIV:nth-of-type(4)>TEXTAREA" KEYS="[39,39,39,39,37,37,37,37]"
 
 hey hey ney
