@@ -1,6 +1,5 @@
 package MKAgent;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.IOException;
@@ -20,6 +19,8 @@ public class Main
    * Input from the game engine.
    */
   private static Reader input = new BufferedReader(new InputStreamReader(System.in));
+  
+  // a random jframe i made so that popups will work
   private static Component frame = new JFrame("TITLE");
 
   /**
@@ -55,11 +56,25 @@ public class Main
   
   private static void displayInfo(Side side, String received, int randomInt, Protocol.MoveTurn moveTurn, String before,String moved, String after)
   {
-    JOptionPane.showMessageDialog(frame, side + "\n\n" + received + "\nMy Move: " + (randomInt+1) + 
-              "\n\nmoveTurn end " + (moveTurn.end?"True":"False") + 
-              "\nmoveTurn again " +  (moveTurn.again?"True":"False") + 
-              "\nmoveTurn move " +  moveTurn.move + 
-              "\n\nBefore\n" + before + "\nMove: " + side.opposite() + " - " + moveTurn.move + "\n" + after + "\nMove: " + side + " - " + (randomInt+1) + "\n" + moved);
+    JOptionPane.showMessageDialog(frame, 
+            // which side are we?
+            "We are: " + side + 
+            // the message received
+            "\n\n" + received + 
+            // what is our move
+            "\nMy Move: " + (randomInt+1) + 
+            // did gae just end?
+            "\n\nmoveTurn end " + (moveTurn.end?"True":"False") + 
+            // our turn again?
+            "\nmoveTurn again " +  (moveTurn.again?"True":"False") + 
+            // what move opposide side just made
+            "\nmoveTurn move " +  moveTurn.move + 
+            // before anything changed
+            "\n\nBefore\n" + before + 
+            // after opposide side made a move
+            "\nMove: " + side.opposite() + " - " + moveTurn.move + "\n" + after +
+            // after we made a move
+            "\nMove: " + side + " - " + (randomInt+1) + "\n" + moved);
   }
   
   private static void displayString(String message)
@@ -67,32 +82,31 @@ public class Main
     JOptionPane.showMessageDialog(frame, message);
   }
 
-   private static Random random = new Random();
-   private static Board board = new Board(7, 7);
-   private static Kalah kalah;
-   private static int randomInt = -1;
-   private static Side side = Side.SOUTH;
-   private static String message;
-   private static String before = null, after = null, moved = null, received = null;
-   private static Side sideAfter;
-   private static Protocol.MoveTurn moveTurn = null;
+  // board to save the status of the game
+  private static Board board = new Board(7, 7);
+  // kalah contains methods to make making a move easier
+  private static Kalah kalah;
+  // int for random move
+  private static int randomInt = -1;
+  // which side we are on, set as south as default to avoid exception
+  // (the first message will tell the agent which side we are on)
+  private static Side side = Side.SOUTH;
+  // strings for debug use and storing the message (received)
+  private static String before = null, after = null, moved = null, received = null;
+  // dont know what this is for yet
+  private static Side sideAfter;
+  // info about the move, if game is over, if its your turn again
+  // and what move the opposite side just made
+  private static Protocol.MoveTurn moveTurn = null;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
    */
   public static void main(String[] args) throws IOException, InvalidMessageException, Exception
   {
-//    frame.setSize(new Dimension(300, 400));
-//    frame.setVisible(true);
-    // TODO: implement
     kalah = new Kalah(board);
-    message = recvMsg();
-    if (Protocol.getMessageType(message).equals(MsgType.START))
-    {
-      side = Protocol.interpretStartMsg(message) ? Side.SOUTH : Side.NORTH;
-    }
-    else throw new Exception();
-//    JOptionPane.showMessageDialog(frame,side);
+    // read first message to find out which side we are on
+    readMessage();
     if (side.equals(Side.SOUTH))
     {
       kalah.makeMove(makeMove());
@@ -102,43 +116,49 @@ public class Main
     while (true)
     {
       before = kalah.getBoard().toString();
-      after = "ERROR!";
+      // in case something went wrong
+      after = "ERROR!"; 
       readMessage();
-      kalah.makeMove(makeMove());
+      // make random move
+      kalah.makeMove(makeMove()); 
+      // record the state of the moved board this agent believes it is in,
+      // and then compare it later to see if it is corrent
       moved = kalah.getBoard().toString();
+      // send the move message
       sendMsg(Protocol.createMoveMsg(randomInt+1));
-      displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+//      displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+      // read reply from server
       readMessage();
+      // as long as we can move again, make another random move
       while (moveTurn.again)
       {
         kalah.makeMove(makeMove());
         moved = kalah.getBoard().toString();
         sendMsg(Protocol.createMoveMsg(randomInt+1));
-        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+//        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
         readMessage();
       }
     }
-    
-//    sendMsg(Protocol.createMoveMsg(2));
-//    MsgType message = Protocol.getMessageType(test);
-//    if (message.equals(MsgType.START))
-//    {
-//      Protocol.interpretStartMsg(test);
-//    }
   }
   
   private static void readMessage() throws IOException, InvalidMessageException
   {
     received = recvMsg();
-    if (Protocol.getMessageType(received).equals(MsgType.STATE))
+    if (Protocol.getMessageType(received).equals(MsgType.START))
+    {
+      side = Protocol.interpretStartMsg(received) ? Side.SOUTH : Side.NORTH;
+    }
+    else if (Protocol.getMessageType(received).equals(MsgType.STATE))
     {
       moveTurn = Protocol.interpretStateMsg(received, kalah.getBoard());
       after = kalah.getBoard().toString();
 //        sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
     }
-    displayString(received);
+//    displayString(received);
   }
   
+  // make a random move
+  // for simplicity and predictability the next random move is always this random + 1
   private static Move makeMove()
   {
     do
@@ -148,11 +168,11 @@ public class Main
     return new Move(side, randomInt+1);
   }
 }
-/*
+/* copy and paste code from here to start the agent
 north
 javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java MKAgent/Main"
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKRefAgent.jar"
-itself
-javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java MKAgent/Main"
+* 
+git add * && git commit -m "updated" && git push
 */
