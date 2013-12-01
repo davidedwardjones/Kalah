@@ -50,7 +50,6 @@ public class Main
         throw new EOFException("Input ended unexpectedly.");
       message.append((char)newCharacter);
     } while((char)newCharacter != '\n');
-//    JOptionPane.showMessageDialog(frame, message.toString());
   return message.toString();
   }
   
@@ -62,12 +61,21 @@ public class Main
               "\nmoveTurn move " +  moveTurn.move + 
               "\n\nBefore\n" + before + "\nMove: " + side.opposite() + " - " + moveTurn.move + "\n" + after + "\nMove: " + side + " - " + (randomInt+1) + "\n" + moved);
   }
+  
+  private static void displayString(String message)
+  {
+    JOptionPane.showMessageDialog(frame, message);
+  }
 
    private static Random random = new Random();
    private static Board board = new Board(7, 7);
    private static Kalah kalah;
    private static int randomInt = -1;
    private static Side side = Side.SOUTH;
+   private static String message;
+   private static String before = null, after = null, moved = null, received = null;
+   private static Side sideAfter;
+   private static Protocol.MoveTurn moveTurn = null;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
@@ -78,17 +86,13 @@ public class Main
 //    frame.setVisible(true);
     // TODO: implement
     kalah = new Kalah(board);
-    String message = recvMsg();
-    MsgType startMsg = Protocol.getMessageType(message);
-    if (startMsg.equals(MsgType.START))
+    message = recvMsg();
+    if (Protocol.getMessageType(message).equals(MsgType.START))
     {
       side = Protocol.interpretStartMsg(message) ? Side.SOUTH : Side.NORTH;
     }
     else throw new Exception();
 //    JOptionPane.showMessageDialog(frame,side);
-    String before = null, after = null, moved = null, received = null;
-    Side sideAfter;
-    Protocol.MoveTurn moveTurn = null;
     if (side.equals(Side.SOUTH))
     {
       kalah.makeMove(makeMove());
@@ -97,26 +101,22 @@ public class Main
     }
     while (true)
     {
-      do{
       before = kalah.getBoard().toString();
       after = "ERROR!";
-      received = recvMsg();
-      if (Protocol.getMessageType(received).equals(MsgType.STATE))
-      {
-        moveTurn = Protocol.interpretStateMsg(received, kalah.getBoard());
-        after = kalah.getBoard().toString();
-        if (kalah.gameOver()) break;
-//        sideAfter = kalah.makeMove(new Move(side, moveTur n.move));
-      }
-//      else
-      
-        
-      
+      readMessage();
       kalah.makeMove(makeMove());
       moved = kalah.getBoard().toString();
       sendMsg(Protocol.createMoveMsg(randomInt+1));
       displayInfo(side, received, randomInt, moveTurn, before, moved, after);
-      }while (moveTurn.again);
+      readMessage();
+      while (moveTurn.again)
+      {
+        kalah.makeMove(makeMove());
+        moved = kalah.getBoard().toString();
+        sendMsg(Protocol.createMoveMsg(randomInt+1));
+        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+        readMessage();
+      }
     }
     
 //    sendMsg(Protocol.createMoveMsg(2));
@@ -125,6 +125,18 @@ public class Main
 //    {
 //      Protocol.interpretStartMsg(test);
 //    }
+  }
+  
+  private static void readMessage() throws IOException, InvalidMessageException
+  {
+    received = recvMsg();
+    if (Protocol.getMessageType(received).equals(MsgType.STATE))
+    {
+      moveTurn = Protocol.interpretStateMsg(received, kalah.getBoard());
+      after = kalah.getBoard().toString();
+//        sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
+    }
+    displayString(received);
   }
   
   private static Move makeMove()
