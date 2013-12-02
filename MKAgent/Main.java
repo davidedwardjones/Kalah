@@ -77,9 +77,15 @@ public class Main
             "\nMove: " + side + " - " + (randomInt+1) + "\n" + moved);
   }
   
-  private static void displayString(String message)
+  private static void displayMessage(String message, Protocol.MoveTurn moveTurn)
   {
-    JOptionPane.showMessageDialog(frame, message);
+    JOptionPane.showMessageDialog(frame, message +
+            // did gae just end?
+            "\n\nmoveTurn end " + (moveTurn.end?"True":"False") + 
+            // our turn again?
+            "\nmoveTurn again " +  (moveTurn.again?"True":"False") + 
+            // what move opposide side just made
+            "\nmoveTurn move " +  moveTurn.move);
   }
 
   // board to save the status of the game
@@ -97,7 +103,8 @@ public class Main
   private static Side sideAfter;
   // info about the move, if game is over, if its your turn again
   // and what move the opposite side just made
-  private static Protocol.MoveTurn moveTurn = null;
+  private static Protocol.MoveTurn moveTurn = new Protocol.MoveTurn();
+  private static boolean gameOver = false;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
@@ -111,25 +118,25 @@ public class Main
     if (side.equals(Side.SOUTH))
     {
       makeMove();
-      while (moveTurn.again)
-      {
-        makeMove();
-      }
+//      while (moveTurn.again)
+//      {
+//        makeMove();
+//      }
     }
-    while (true)
+    while (!gameOver)
     {
       before = kalah.getBoard().toString();
       // in case something went wrong
       after = "ERROR!"; 
       readMessage();
+      
+      while (!moveTurn.again)
+      {
+        readMessage();
+        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+      }
       // make random move
       makeMove(); 
-      
-      // as long as we can move again, make another random move
-      while (moveTurn.again)
-      {
-        makeMove();
-      }
     }
   }
   
@@ -146,7 +153,9 @@ public class Main
       after = kalah.getBoard().toString();
 //        sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
     }
-    displayString(received);
+    else if (Protocol.getMessageType(received).equals(MsgType.END))
+      gameOver = true;
+    displayMessage(received, moveTurn);
   }
   
   // make a random move
@@ -175,5 +184,5 @@ javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java M
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKRefAgent.jar"
 * 
-git add * && git commit -m "updated" && git push
+git add * && git commit -m "working again" && git push
 */
