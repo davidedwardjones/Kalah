@@ -105,13 +105,16 @@ public class Main
   public static void main(String[] args) throws IOException, InvalidMessageException, Exception
   {
     kalah = new Kalah(board);
+    before = kalah.getBoard().toString();
     // read first message to find out which side we are on
     readMessage();
     if (side.equals(Side.SOUTH))
     {
-      kalah.makeMove(makeMove());
-      sendMsg(Protocol.createMoveMsg(randomInt+1));
-      displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+      makeMove();
+      while (moveTurn.again)
+      {
+        makeMove();
+      }
     }
     while (true)
     {
@@ -120,23 +123,12 @@ public class Main
       after = "ERROR!"; 
       readMessage();
       // make random move
-      kalah.makeMove(makeMove()); 
-      // record the state of the moved board this agent believes it is in,
-      // and then compare it later to see if it is corrent
-      moved = kalah.getBoard().toString();
-      // send the move message
-      sendMsg(Protocol.createMoveMsg(randomInt+1));
-//      displayInfo(side, received, randomInt, moveTurn, before, moved, after);
-      // read reply from server
-      readMessage();
+      makeMove(); 
+      
       // as long as we can move again, make another random move
       while (moveTurn.again)
       {
-        kalah.makeMove(makeMove());
-        moved = kalah.getBoard().toString();
-        sendMsg(Protocol.createMoveMsg(randomInt+1));
-//        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
-        readMessage();
+        makeMove();
       }
     }
   }
@@ -154,18 +146,27 @@ public class Main
       after = kalah.getBoard().toString();
 //        sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
     }
-//    displayString(received);
+    displayString(received);
   }
   
   // make a random move
   // for simplicity and predictability the next random move is always this random + 1
-  private static Move makeMove()
+  private static void makeMove() throws IOException, InvalidMessageException
   {
     do
     {
       randomInt = (randomInt + 1) % 7;
     } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    return new Move(side, randomInt+1);
+    
+    kalah.makeMove(new Move(side, randomInt+1));
+    // record the state of the moved board this agent believes it is in,
+    // and then compare it later to see if it is corrent
+    moved = kalah.getBoard().toString();
+    sendMsg(Protocol.createMoveMsg(randomInt+1));
+    displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+    
+    // read reply from server
+    readMessage();
   }
 }
 /* copy and paste code from here to start the agent
