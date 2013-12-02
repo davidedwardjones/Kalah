@@ -77,9 +77,15 @@ public class Main
             "\nMove: " + side + " - " + (randomInt+1) + "\n" + moved);
   }
   
-  private static void displayString(String message)
+  private static void displayMessage(String message, Protocol.MoveTurn moveTurn)
   {
-    JOptionPane.showMessageDialog(frame, message);
+    JOptionPane.showMessageDialog(frame, message +
+            // did gae just end?
+            "\n\nmoveTurn end " + (moveTurn.end?"True":"False") + 
+            // our turn again?
+            "\nmoveTurn again " +  (moveTurn.again?"True":"False") + 
+            // what move opposide side just made
+            "\nmoveTurn move " +  moveTurn.move);
   }
 
   // board to save the status of the game
@@ -97,7 +103,8 @@ public class Main
   private static Side sideAfter;
   // info about the move, if game is over, if its your turn again
   // and what move the opposite side just made
-  private static Protocol.MoveTurn moveTurn = null;
+  private static Protocol.MoveTurn moveTurn = new Protocol.MoveTurn();
+  private static boolean gameOver = false;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
@@ -105,39 +112,31 @@ public class Main
   public static void main(String[] args) throws IOException, InvalidMessageException, Exception
   {
     kalah = new Kalah(board);
+    before = kalah.getBoard().toString();
     // read first message to find out which side we are on
     readMessage();
     if (side.equals(Side.SOUTH))
     {
-      kalah.makeMove(makeMove());
-      sendMsg(Protocol.createMoveMsg(randomInt+1));
-      displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+      makeMove();
+//      while (moveTurn.again)
+//      {
+//        makeMove();
+//      }
     }
-    while (true)
+    while (!gameOver)
     {
       before = kalah.getBoard().toString();
       // in case something went wrong
       after = "ERROR!"; 
       readMessage();
-      // make random move
-      kalah.makeMove(makeMove()); 
-      // record the state of the moved board this agent believes it is in,
-      // and then compare it later to see if it is corrent
-      moved = kalah.getBoard().toString();
-      // send the move message
-      sendMsg(Protocol.createMoveMsg(randomInt+1));
-//      displayInfo(side, received, randomInt, moveTurn, before, moved, after);
-      // read reply from server
-      readMessage();
-      // as long as we can move again, make another random move
-      while (moveTurn.again)
+      
+      while (!moveTurn.again)
       {
-        kalah.makeMove(makeMove());
-        moved = kalah.getBoard().toString();
-        sendMsg(Protocol.createMoveMsg(randomInt+1));
-//        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
         readMessage();
+        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
       }
+      // make random move
+      makeMove(); 
     }
   }
   
@@ -154,18 +153,29 @@ public class Main
       after = kalah.getBoard().toString();
 //        sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
     }
-//    displayString(received);
+    else if (Protocol.getMessageType(received).equals(MsgType.END))
+      gameOver = true;
+    displayMessage(received, moveTurn);
   }
   
   // make a random move
   // for simplicity and predictability the next random move is always this random + 1
-  private static Move makeMove()
+  private static void makeMove() throws IOException, InvalidMessageException
   {
     do
     {
       randomInt = (randomInt + 1) % 7;
     } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    return new Move(side, randomInt+1);
+    
+    kalah.makeMove(new Move(side, randomInt+1));
+    // record the state of the moved board this agent believes it is in,
+    // and then compare it later to see if it is corrent
+    moved = kalah.getBoard().toString();
+    sendMsg(Protocol.createMoveMsg(randomInt+1));
+    displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+    
+    // read reply from server
+    readMessage();
   }
 }
 /* copy and paste code from here to start the agent
@@ -174,5 +184,5 @@ javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java M
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKRefAgent.jar"
 * 
-git add * && git commit -m "updated" && git push
+git add * && git commit -m "working again" && git push
 */
