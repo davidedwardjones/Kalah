@@ -88,6 +88,11 @@ public class Main
             "\nmoveTurn move " +  moveTurn.move);
   }
 
+  private static void display(String message)
+  {
+    JOptionPane.showMessageDialog(frame, message);
+  }
+  
   // board to save the status of the game
   private static Board board = new Board(7, 7);
   // kalah contains methods to make making a move easier
@@ -118,17 +123,23 @@ public class Main
     if (side.equals(Side.SOUTH))
     {
       makeMove();
-//      while (moveTurn.again)
-//      {
-//        makeMove();
-//      }
+      // if opposide side swap
+      readMessage();
+      if (moveTurn.move == -1)
+        // they swapped
+        side = side.opposite(); // we swap too
     }
+    else
+    {
+      readMessage();
+      sendMsg(Protocol.createSwapMsg());
+      side = side.opposite();
+      readMessage();
+    }
+    
     while (!gameOver)
     {
       before = kalah.getBoard().toString();
-      // in case something went wrong
-      after = "ERROR!"; 
-      readMessage();
       
       while (!moveTurn.again)
       {
@@ -184,5 +195,5 @@ javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java M
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKRefAgent.jar"
 * 
-git add * && git commit -m "working again" && git push
+git add * && git commit -m "push" && git push
 */
