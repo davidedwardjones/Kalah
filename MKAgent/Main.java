@@ -5,7 +5,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
