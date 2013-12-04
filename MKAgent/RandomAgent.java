@@ -196,5 +196,5 @@ javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java M
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/RandomAgent" "java -jar MKRefAgent.jar"
 * 
-git add * && git commit -m "random agent working finally" && git push
+git add * && git commit -m "evaluation function" && git push
 */

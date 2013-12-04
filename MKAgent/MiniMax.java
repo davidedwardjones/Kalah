@@ -14,18 +14,31 @@ package MKAgent;
 
 public class MiniMax
 {
-	//DELETE
-	public static int evalFunc()
-	{
-		return 0;
-	}
+  
+        private Board root;
+        private EvaluationFunction evalFunc;
+        public MiniMax()
+        {
+          evalFunc = new EvaluationFunction(root);
+        }
 
-	public static int minimax(Board node, int depth, boolean maximisingPlayer)
+        public void setRootBoard(Board b)
+        {
+          root = b;
+        }
+
+
+        public int startMiniMax(int depth, boolean maximisingPlayer)
+        {
+          return this.minimax(root, depth, maximisingPlayer);
+        }
+        
+	private int minimax(Board node, int depth, boolean maximisingPlayer)
 	{
 		//if depth = 0 or node is a terminal node
 		if(depth == 0 || Kalah.gameOver(node))
 		{
-			return evalFunc();//heuristic value of node
+			return evalFunc.compareScorlingWells(node, maximisingPlayer ? Side.SOUTH : Side.NORTH);//heuristic value of node
 		}
 		
 		if(maximisingPlayer)	//SOUTH
