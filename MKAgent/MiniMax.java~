@@ -49,18 +49,17 @@ public class MiniMax
     return this.minimax(root, depth, side, 0).getMove();
   }
         
-  private MoveEvalScore minimax(Board node, int depth, Side side, int thisMove)
+  private MoveEvalScore minimax(Board node, int depth, Side side, int hole)
   {
   	//display("minimax(" + node.toString() + ", " + depth + ", " + maximisingPlayer + ")");
     //if depth = 0 or node is a terminal node
     if(depth == 0 || Kalah.gameOver(node))
     {
-      return new MoveEvalScore(thisMove,evalFunc.compareScorlingWells(node, initialDepth % 2 == 0 ?side: side.opposite()));//heuristic value of node
+      return new MoveEvalScore(hole,evalFunc.compareScorlingWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));//heuristic value of node
     }
     
-    if(side.equals(Side.SOUTH))  //SOUTH
-    {
-      MoveEvalScore bestValue = new MoveEvalScore(0,Integer.MIN_VALUE);
+    
+      MoveEvalScore bestValue = side.equals(Side.SOUTH)? new MoveEvalScore(hole,Integer.MIN_VALUE): new MoveEvalScore(hole,Integer.MAX_VALUE);
       
       //for each child node
       int numHoles = node.getNoOfHoles();
@@ -68,20 +67,20 @@ public class MiniMax
       for(int i = 1; i <= numHoles; i++)    //south side 0-6 are wells, 7 = store
       {
         //if there are seeds, then make a clone
-        if(node.getSeeds(Side.SOUTH, i) > 0)
+        if(node.getSeeds(side, i) > 0)
         {
           try
           {
             Board child = node.clone();
             //make the move
-            Move move = new Move(Side.SOUTH, i);
+            Move move = new Move(side, i);
             child = makeMove(child, move);
             
             //recursively call minimax on child
-            MoveEvalScore val = minimax(child, depth - 1, Side.NORTH, i);
-            display("depth: " + depth + " " + child.toString() + "\nValue = " + val);
+            MoveEvalScore val = minimax(child, depth - 1, side.opposite(), i);
+            display("depth: " + depth + "\n" + child.toString() + "\nValue = " + val);
             
-            bestValue = max(bestValue, val);
+            bestValue = side.equals(Side.SOUTH)?max(bestValue, val):min(bestValue, val);
           }
           catch(Exception e)
           {
@@ -90,40 +89,6 @@ public class MiniMax
         }
       }
       return bestValue;
-    }
-    else    //NORTH
-    {
-      MoveEvalScore bestValue = new MoveEvalScore(0,Integer.MAX_VALUE);
-      
-      //for each child node
-      int numHoles = node.getNoOfHoles();
-      
-      for(int i = 1; i <= numHoles; i++)  //south side 1-7 are wells, 0 = store
-      {
-        //if there are seeds, then make a clone
-//        if(node.getSeeds(Side.NORTH, i) > 0)
-        if(Kalah.isLegalMove(node, new Move(Side.NORTH, i)))
-        {
-          try
-          {
-            Board child = node.clone();
-            //make the move
-            Move move = new Move(Side.NORTH, i);
-            child = makeMove(child, move);
-          
-            //recursively call minimax on child
-            MoveEvalScore val = minimax(child, depth - 1, Side.SOUTH, i);
-            bestValue = min(bestValue, val);
-          }
-          catch(Exception e)
-          {
-            System.err.println(e);
-          }
-        }
-      }
-      return bestValue;
-    }
-    
   }
   
   public static MoveEvalScore max(MoveEvalScore a, MoveEvalScore b)

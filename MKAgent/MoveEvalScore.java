@@ -29,4 +29,9 @@ public class MoveEvalScore
 		return this.move;
 	}
 
+	public int getScore()
+	{
+		return this.evalScore;
+	}
+
 }
