@@ -181,7 +181,7 @@ public class Main
 //    {
 //      randomInt = (randomInt + 1) % 7;
 //    } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    randomInt = minimax.startMiniMax(3, side);
+    randomInt = minimax.startMiniMax(1, side);
     display("sfhshfks" + randomInt);
     kalah.makeMove(new Move(side, randomInt));
     // record the state of the moved board this agent believes it is in,
