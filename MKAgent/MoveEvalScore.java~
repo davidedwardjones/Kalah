@@ -8,13 +8,6 @@ package MKAgent;
  *
  * @author mbax9yc4
  */
- 
- 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import java.awt.Component;
- 
- 
 public class MoveEvalScore
 {
 	private int move;
