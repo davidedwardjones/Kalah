@@ -5,7 +5,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -88,6 +87,11 @@ public class Main
             "\nmoveTurn move " +  moveTurn.move);
   }
 
+  private static void display(String message)
+  {
+    JOptionPane.showMessageDialog(frame, message);
+  }
+  
   // board to save the status of the game
   private static Board board = new Board(7, 7);
   // kalah contains methods to make making a move easier
@@ -105,6 +109,8 @@ public class Main
   // and what move the opposite side just made
   private static Protocol.MoveTurn moveTurn = new Protocol.MoveTurn();
   private static boolean gameOver = false;
+  
+  private static MiniMax minimax;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
@@ -118,21 +124,28 @@ public class Main
     if (side.equals(Side.SOUTH))
     {
       makeMove();
-//      while (moveTurn.again)
-//      {
-//        makeMove();
-//      }
+      // if opposide side swap
+      readMessage();
+      if (moveTurn.move == -1)
+        // they swapped
+        side = side.opposite(); // we swap too
     }
+    else
+    {
+      readMessage();
+      sendMsg(Protocol.createSwapMsg());
+      side = side.opposite();
+      readMessage();
+    }
+    
     while (!gameOver)
     {
       before = kalah.getBoard().toString();
-      // in case something went wrong
-      after = "ERROR!"; 
-      readMessage();
       
       while (!moveTurn.again)
       {
         readMessage();
+        display("WHILE MoveTurn.again = false");
         displayInfo(side, received, randomInt, moveTurn, before, moved, after);
       }
       // make random move
@@ -162,16 +175,18 @@ public class Main
   // for simplicity and predictability the next random move is always this random + 1
   private static void makeMove() throws IOException, InvalidMessageException
   {
-    do
-    {
-      randomInt = (randomInt + 1) % 7;
-    } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    
-    kalah.makeMove(new Move(side, randomInt+1));
+    minimax = new MiniMax(kalah.getBoard());
+//    do
+//    {
+//      randomInt = (randomInt + 1) % 7;
+//    } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
+    randomInt = minimax.startMiniMax(1, true);
+    kalah.makeMove(new Move(side, randomInt));
     // record the state of the moved board this agent believes it is in,
     // and then compare it later to see if it is corrent
     moved = kalah.getBoard().toString();
-    sendMsg(Protocol.createMoveMsg(randomInt+1));
+    sendMsg(Protocol.createMoveMsg(randomInt));
+    display("MoveMade");
     displayInfo(side, received, randomInt, moveTurn, before, moved, after);
     
     // read reply from server
@@ -184,5 +199,5 @@ javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java M
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKRefAgent.jar"
 * 
-git add * && git commit -m "working again" && git push
+git add * && git commit -m "push" && git push
 */
