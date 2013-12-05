@@ -24,7 +24,7 @@ public class EvaluationFunction
   
   private static void display(String message)
   {
-    JOptionPane.showMessageDialog(frame, message);
+    //JOptionPane.showMessageDialog(frame, message);
   }
   
   public EvaluationFunction(Board board)
@@ -58,7 +58,8 @@ public class EvaluationFunction
   		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side);
   	}
   	
-    
+  	
+  	
   }
   
   
@@ -66,6 +67,11 @@ public class EvaluationFunction
   {
   	return(currentBoard.getSeeds(side, hole) + hole == currentBoard.getNoOfHoles()+1)? true: false;
   }
+  
+  
+  
+  
+  
   
     // if boardLength+1 is returned it means the ending position is the scoring well
   public Move getEndingPos(Board board, Move toMake)
