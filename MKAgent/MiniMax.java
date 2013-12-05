@@ -40,16 +40,16 @@ public class MiniMax
 
 	private static void display(String message)
   {
-    JOptionPane.showMessageDialog(frame, message);
+    //JOptionPane.showMessageDialog(frame, message);
   }
 
   public int startMiniMax(int depth, Side side)
   {
   	this.initialDepth = depth;
-    return this.minimax(root, depth, side, 0).getMove();
+    return this.minimax(root, depth, side, 0, 0).getMove();
   }
         
-  private MoveEvalScore minimax(Board node, int depth, Side side, int hole)
+  private MoveEvalScore minimax(Board node, int depth, Side side, int hole, int prevHole)
   {
   	//display("minimax(" + node.toString() + ", " + depth + ", " + maximisingPlayer + ")");
     //if depth = 0 or node is a terminal node
@@ -77,10 +77,12 @@ public class MiniMax
             child = makeMove(child, move);
             
             //recursively call minimax on child
-            MoveEvalScore val = minimax(child, depth - 1, side.opposite(), i);
-            display("depth: " + depth + "\n" + child.toString() + "\nValue = " + val);
+            MoveEvalScore val = minimax(child, depth - 1, side.opposite(), i, hole);
+            display("depth: " + depth + "  prevHole: " + prevHole + "\n" + root.toString() + "\n" + child.toString()
+            				+ "\nValue = " + val);
             
-            bestValue = side.equals(Side.SOUTH)?max(bestValue, val):min(bestValue, val);
+            bestValue = /*side.equals(Side.SOUTH)?*/
+            max(bestValue, val);//:min(bestValue, val);
           }
           catch(Exception e)
           {
@@ -88,7 +90,7 @@ public class MiniMax
           }
         }
       }
-      return bestValue;
+      return new MoveEvalScore(prevHole, bestValue.getScore());
   }
   
   public static MoveEvalScore max(MoveEvalScore a, MoveEvalScore b)
