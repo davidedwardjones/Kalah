@@ -67,20 +67,7 @@ public class EvaluationFunction
   	return(board.getSeeds(side, hole) + hole == 8)? true: false;
   }
   
-    // if boardLength+1 is returned it means the ending position is the scoring well
-  public Move getEndingPos(Board board, Move toMake)
-  {
-    Side resultSide = toMake.getSide();
-    int boardLength = board.getNoOfHoles();
-    int seedsInHole = board.getSeeds(toMake.getSide(), toMake.getHole());
-    int result = toMake.getHole() + seedsInHole;
-    if (result > boardLength+1)
-    {
-      result -= (boardLength+1);
-      resultSide = resultSide.opposite();
-    }
-    return new Move(resultSide, result);
-  }
+  
 }
 /* copy and paste code from here to start the agent
 north
