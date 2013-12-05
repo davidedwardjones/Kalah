@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
  */
 public class Main
 {
+  private static boolean showMessage = true;
+  
   /**
    * Input from the game engine.
    */
@@ -55,6 +57,7 @@ public class Main
   
   private static void displayInfo(Side side, String received, int randomInt, Protocol.MoveTurn moveTurn, String before,String moved, String after)
   {
+    if(showMessage)
     JOptionPane.showMessageDialog(frame, 
             // which side are we?
             "We are: " + side + 
@@ -78,6 +81,7 @@ public class Main
   
   private static void displayMessage(String message, Protocol.MoveTurn moveTurn)
   {
+    if(showMessage)
     JOptionPane.showMessageDialog(frame, message +
             // did gae just end?
             "\n\nmoveTurn end " + (moveTurn.end?"True":"False") + 
@@ -89,6 +93,7 @@ public class Main
 
   private static void display(String message)
   {
+    if(showMessage)
     JOptionPane.showMessageDialog(frame, message);
   }
   
