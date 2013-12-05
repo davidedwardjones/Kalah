@@ -40,7 +40,7 @@ public class MiniMax
 
 	private static void display(String message)
   {
-    //JOptionPane.showMessageDialog(frame, message);
+    JOptionPane.showMessageDialog(frame, message);
   }
 
   public int startMiniMax(int depth, Side side)
@@ -51,15 +51,19 @@ public class MiniMax
         
   private MoveEvalScore minimax(Board node, int depth, Side side, int hole, int prevHole)
   {
-  	//display("minimax(" + node.toString() + ", " + depth + ", " + maximisingPlayer + ")");
+  	//display("minimax(" + node.toString() + ", " + depth + ", " + side.toString() + ", " + hole + ", " + prevHole + ")");
+    
+    
     //if depth = 0 or node is a terminal node
     if(depth == 0 || Kalah.gameOver(node))
     {
+    	//	display("Leaf node: hole = " + hole + ", score = " 
+    	//				+ evalFunc.compareScorlingWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));
       return new MoveEvalScore(hole,evalFunc.compareScorlingWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));//heuristic value of node
     }
     
     
-      MoveEvalScore bestValue = side.equals(Side.SOUTH)? new MoveEvalScore(hole,Integer.MIN_VALUE): new MoveEvalScore(hole,Integer.MAX_VALUE);
+      MoveEvalScore bestValue = /*side.equals(Side.SOUTH)?*/ new MoveEvalScore(hole,Integer.MIN_VALUE);//: new MoveEvalScore(hole,Integer.MAX_VALUE);
       
       //for each child node
       int numHoles = node.getNoOfHoles();
@@ -78,8 +82,8 @@ public class MiniMax
             
             //recursively call minimax on child
             MoveEvalScore val = minimax(child, depth - 1, side.opposite(), i, hole);
-            display("depth: " + depth + "  prevHole: " + prevHole + "\n" + root.toString() + "\n" + child.toString()
-            				+ "\nValue = " + val);
+            //display("depth: " + depth + "  prevHole: " + prevHole + "\n" + root.toString() + "\n" + child.toString()
+            //				+ "\nValue = " + val);
             
             bestValue = /*side.equals(Side.SOUTH)?*/
             max(bestValue, val);//:min(bestValue, val);
@@ -90,7 +94,17 @@ public class MiniMax
           }
         }
       }
-      return new MoveEvalScore(prevHole, bestValue.getScore());
+    	//display("jksdfhsminimax(" + node.toString() + ", " + depth + ", " + side.toString() + ", " + hole + ", " + prevHole + ")");
+    	//display(depth + "\nthis move: " + hole + ", prev move: " + prevHole + "\nBest score = " + bestValue.getScore() + "\nMove: " + bestValue.getMove());
+    	if(node.equals(root))
+    	{
+    		return bestValue;
+    	}
+    	else
+    	{
+    		return new MoveEvalScore(hole, bestValue.getScore());
+    	}
+      
   }
   
   public static MoveEvalScore max(MoveEvalScore a, MoveEvalScore b)
