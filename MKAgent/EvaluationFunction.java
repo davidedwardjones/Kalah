@@ -16,7 +16,6 @@ import java.awt.Component;
  
 public class EvaluationFunction
 {
-  private Board currentBoard;
   private Side ourSide;
     
   // a random jframe i made so that popups will work
@@ -24,22 +23,17 @@ public class EvaluationFunction
   
   private static void display(String message)
   {
-    //JOptionPane.showMessageDialog(frame, message);
+    JOptionPane.showMessageDialog(frame, message);
   }
   
-  public EvaluationFunction(Board board)
+  public EvaluationFunction(Side side)
   {
-    currentBoard = board;
+    ourSide = side;
   }
   
   public void setOurSide(Side side)
   {
     ourSide = side;
-  }
-  
-  public void setCurrentBoard(Board board)
-  {
-    currentBoard = board;
   }
   
   // step one: higher score on our scoring well
@@ -49,17 +43,16 @@ public class EvaluationFunction
   	
   	//display(currentBoard.toString() + "\nside: " + side.toString());
   	
-  	if(endsInWell(side, hole))
-  	{
-  		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side) + 1;
-  	}
-  	else
-  	{
-  		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side);
-  	}
-  	
-  	
-  	
+//  	if(endsInWell(side, hole))
+//  	{
+//  		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side) + 1;
+//  	}
+//  	else
+//  	{
+//  		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side);
+//  	}
+        
+        return board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite());
   }
   
   
@@ -67,11 +60,6 @@ public class EvaluationFunction
   {
   	return(currentBoard.getSeeds(side, hole) + hole == currentBoard.getNoOfHoles()+1)? true: false;
   }
-  
-  
-  
-  
-  
   
     // if boardLength+1 is returned it means the ending position is the scoring well
   public Move getEndingPos(Board board, Move toMake)
