@@ -26,9 +26,9 @@ public class EvaluationFunction
     JOptionPane.showMessageDialog(frame, message);
   }
   
-  public EvaluationFunction(Side side)
+  public EvaluationFunction()
   {
-    ourSide = side;
+//    ourSide = side;
   }
   
   public void setOurSide(Side side)
