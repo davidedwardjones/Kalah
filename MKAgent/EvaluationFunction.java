@@ -55,10 +55,10 @@ public class EvaluationFunction
 
 
 
-//  public boolean endsInWell(Side side, int hole)
-//  {
-//  	return(currentBoard.getSeeds(side, hole) + hole == currentBoard.getNoOfHoles()+1)? true: false;
-//  }
+/*  public boolean endsInWell(Side side, int hole)
+* {
+*  	return(currentBoard.getSeeds(side, hole) + hole == currentBoard.getNoOfHoles()+1)? true: false;
+*/  }
   
     // if boardLength+1 is returned it means the ending position is the scoring well
   public Move getEndingPos(Board board, Move toMake)
