@@ -115,6 +115,8 @@ public class Main
   private static Protocol.MoveTurn moveTurn = new Protocol.MoveTurn();
   private static boolean gameOver = false;
   
+  private static int halfWayPoint = 49;
+  
   private static MiniMax minimax;
   /**
    * The main method, invoked when the program is started.
@@ -129,7 +131,16 @@ public class Main
     display("Was side " + side.toString());
     if (side.equals(Side.SOUTH))
     {
-      makeMove();
+      kalah.makeMove(new Move(side, 2));
+      // record the state of the moved board this agent believes it is in,
+      // and then compare it later to see if it is corrent
+      moved = kalah.getBoard().toString();
+      sendMsg(Protocol.createMoveMsg(2));
+      //display("MoveMade");
+      displayInfo(side, received, 2, moveTurn, before, moved, after);
+
+      // read reply from server
+      readMessage();
       // if opposide side swap
       readMessage();
       if (moveTurn.move == -1)
@@ -186,11 +197,7 @@ public class Main
   private static void makeMove() throws IOException, InvalidMessageException
   {
     minimax = new MiniMax(kalah.getBoard());
-//    do
-//    {
-//      randomInt = (randomInt + 1) % 7;
-//    } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    randomInt = minimax.startMiniMax(1, side);
+    randomInt = minimax.startMiniMax(7, side);
     display("MAKE MOVE " + randomInt);
     kalah.makeMove(new Move(side, randomInt));
     // record the state of the moved board this agent believes it is in,
