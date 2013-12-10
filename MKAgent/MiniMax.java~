@@ -20,6 +20,7 @@ public class MiniMax
   private Board root;
   private EvaluationFunction evalFunc;
   private int initialDepth;
+  private Side ourSide;
   
   // a random jframe i made so that popups will work
   private static Component frame = new JFrame("TITLE");
@@ -29,7 +30,7 @@ public class MiniMax
   public MiniMax(Board root)
   {
     this.root = root;
-    evalFunc = new EvaluationFunction(root);
+    evalFunc = new EvaluationFunction();
   }
 
   public void setRootBoard(Board b)
@@ -46,6 +47,7 @@ public class MiniMax
   public int startMiniMax(int depth, Side side)
   {
   	this.initialDepth = depth;
+        ourSide = side;
     return this.minimax(root, depth, side, 0, 0).getMove();
   }
         
@@ -63,8 +65,9 @@ public class MiniMax
     }
     
     
-      MoveEvalScore bestValue = /*side.equals(Side.SOUTH)?*/ new MoveEvalScore(hole,Integer.MIN_VALUE);//: new MoveEvalScore(hole,Integer.MAX_VALUE);
-      
+//      MoveEvalScore bestValue = /*side.equals(Side.SOUTH)?*/ new MoveEvalScore(hole,Integer.MIN_VALUE);//: new MoveEvalScore(hole,Integer.MAX_VALUE);
+      MoveEvalScore bestValue = new MoveEvalScore(hole,side.equals(ourSide)?Integer.MIN_VALUE:Integer.MAX_VALUE);
+
       //for each child node
       int numHoles = node.getNoOfHoles();
       
@@ -85,8 +88,7 @@ public class MiniMax
             //display("depth: " + depth + "  prevHole: " + prevHole + "\n" + root.toString() + "\n" + child.toString()
             //				+ "\nValue = " + val);
             
-            bestValue = /*side.equals(Side.SOUTH)?*/
-            max(bestValue, val);//:min(bestValue, val);
+            bestValue = side.equals(ourSide)?max(bestValue, val):min(bestValue, val);
           }
           catch(Exception e)
           {
@@ -102,7 +104,7 @@ public class MiniMax
     	}
     	else
     	{
-    		return new MoveEvalScore(hole,bestValue.getScore());
+    		return new MoveEvalScore(hole, bestValue.getScore());
     	}
       
   }

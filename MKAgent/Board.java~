@@ -246,13 +246,11 @@ public class Board extends Observable implements Cloneable
       int totalInSide = 0;
       
       if (side.equals(Side.NORTH))
-      {
-        for (int i=1; i <= holes; i++)
+    	for (int i=1; i <= holes; i++)
     	  totalInSide+= board[NORTH_ROW][i];
-      }else{
+      else
         for (int i=1; i <= holes; i++)
    	  totalInSide+= board[SOUTH_ROW][i];
-      }
      return totalInSide;
     }
 

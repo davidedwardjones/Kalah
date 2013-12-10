@@ -37,7 +37,7 @@ public class EvaluationFunction
   }
   
   // step one: higher score on our scoring well
-  public int compareScorlingWells(Board board, Side side, int hole)
+  public int compareScoringWells(Board board, Side side, int hole)
   {
   	//display(board.getSeedsInStore(side) + " - " + currentBoard.getSeedsInStore(side) + " = " +(board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side)));
   	
@@ -56,6 +56,13 @@ public class EvaluationFunction
   }
   
   
+  public int compareSeedsInPlay(Board board, Side side)
+  {
+   return ((board.getSeedsInStore(side)+board.getSeedsInPlay(side)) - (board.getSeedsInStore(side.opposite())+board.getSeedsInPlay(side.opposite())));
+  }
+
+
+
 //  public boolean endsInWell(Side side, int hole)
 //  {
 //  	return(currentBoard.getSeeds(side, hole) + hole == currentBoard.getNoOfHoles()+1)? true: false;

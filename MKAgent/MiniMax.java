@@ -60,8 +60,8 @@ public class MiniMax
     if(depth == 0 || Kalah.gameOver(node))
     {
     	//	display("Leaf node: hole = " + hole + ", score = " 
-    	//				+ evalFunc.compareScorlingWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));
-      return new MoveEvalScore(hole,evalFunc.compareScorlingWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));//heuristic value of node
+    	//				+ evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));
+      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));//heuristic value of node
     }
     
     
