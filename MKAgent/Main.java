@@ -126,15 +126,19 @@ public class Main
     before = kalah.getBoard().toString();
     // read first message to find out which side we are on
     readMessage();
-    //display("Was side " + side.toString());
+    display("Was side " + side.toString());
     if (side.equals(Side.SOUTH))
     {
       makeMove();
       // if opposide side swap
       readMessage();
       if (moveTurn.move == -1)
+      {
         // they swapped
         side = side.opposite(); // we swap too
+        display("They swapped");
+//        makeMove(); 
+      }
     }
     else
     {
@@ -186,7 +190,7 @@ public class Main
 //    {
 //      randomInt = (randomInt + 1) % 7;
 //    } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    randomInt = minimax.startMiniMax(2, side);
+    randomInt = minimax.startMiniMax(1, side);
     display("MAKE MOVE " + randomInt);
     kalah.makeMove(new Move(side, randomInt));
     // record the state of the moved board this agent believes it is in,
@@ -203,8 +207,13 @@ public class Main
 /* copy and paste code from here to start the agent
 north
 javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java MKAgent/Main"
+* 
+javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar JimmyPlayer.jar" "java MKAgent/Main"
+*
 south
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKRefAgent.jar"
 * 
+javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar JimmyPlayer.jar"
+*
 git add * && git commit -m "push" && git push
 */
