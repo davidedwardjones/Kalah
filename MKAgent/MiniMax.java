@@ -65,8 +65,9 @@ public class MiniMax
     }
     
     
-      MoveEvalScore bestValue = /*side.equals(Side.SOUTH)?*/ new MoveEvalScore(hole,Integer.MIN_VALUE);//: new MoveEvalScore(hole,Integer.MAX_VALUE);
-      
+//      MoveEvalScore bestValue = /*side.equals(Side.SOUTH)?*/ new MoveEvalScore(hole,Integer.MIN_VALUE);//: new MoveEvalScore(hole,Integer.MAX_VALUE);
+      MoveEvalScore bestValue = new MoveEvalScore(hole,side.equals(ourSide)?Integer.MIN_VALUE:Integer.MAX_VALUE);
+
       //for each child node
       int numHoles = node.getNoOfHoles();
       
