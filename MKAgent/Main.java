@@ -126,7 +126,7 @@ public class Main
     before = kalah.getBoard().toString();
     // read first message to find out which side we are on
     readMessage();
-    display("Was side " + side.toString());
+    //display("Was side " + side.toString());
     if (side.equals(Side.SOUTH))
     {
       makeMove();
@@ -143,7 +143,7 @@ public class Main
       side = side.opposite();
       readMessage();
     }
-     display("Now side " + side.toString());
+     //display("Now side " + side.toString());
     while (!gameOver)
     {
       before = kalah.getBoard().toString();
@@ -151,7 +151,7 @@ public class Main
       while (!moveTurn.again)
       {
         readMessage();
-        display("WHILE MoveTurn.again = false");
+        //display("WHILE MoveTurn.again = false");
         displayInfo(side, received, randomInt, moveTurn, before, moved, after);
       }
       // make random move
@@ -186,14 +186,14 @@ public class Main
 //    {
 //      randomInt = (randomInt + 1) % 7;
 //    } while (!kalah.isLegalMove(new Move(side, randomInt+1)));
-    randomInt = minimax.startMiniMax(3, side);
-    display("sfhshfks" + randomInt);
+    randomInt = minimax.startMiniMax(2, side);
+    display("MAKE MOVE " + randomInt);
     kalah.makeMove(new Move(side, randomInt));
     // record the state of the moved board this agent believes it is in,
     // and then compare it later to see if it is corrent
     moved = kalah.getBoard().toString();
     sendMsg(Protocol.createMoveMsg(randomInt));
-    display("MoveMade");
+    //display("MoveMade");
     displayInfo(side, received, randomInt, moveTurn, before, moved, after);
     
     // read reply from server
