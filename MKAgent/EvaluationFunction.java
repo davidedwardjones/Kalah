@@ -43,16 +43,8 @@ public class EvaluationFunction
   	
   	//display(currentBoard.toString() + "\nside: " + side.toString());
   	
-//  	if(endsInWell(side, hole))
-//  	{
-//  		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side) + 1;
-//  	}
-//  	else
-//  	{
-//  		return board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side);
-//  	}
-        
-        return board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite());
+    // (our well - opposide well) * scalling factor + (side on our side - side on opposite side)
+    return (board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite())) * 2 + (board.getSeedsInPlay(side) - board.getSeedsInPlay(side.opposite()));
   }
   
   

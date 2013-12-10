@@ -197,7 +197,7 @@ public class Main
   private static void makeMove() throws IOException, InvalidMessageException
   {
     minimax = new MiniMax(kalah.getBoard());
-    randomInt = minimax.startMiniMax(7, side);
+    randomInt = minimax.startMiniMax(5, side);
     display("MAKE MOVE " + randomInt);
     kalah.makeMove(new Move(side, randomInt));
     // record the state of the moved board this agent believes it is in,
@@ -222,5 +222,5 @@ javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar MKR
 * 
 javac MKAgent/*.java &&java -jar ManKalah.jar "java MKAgent/Main" "java -jar JimmyPlayer.jar"
 *
-git add * && git commit -m "push" && git push
+git add * && git commit -m "new eval func" && git push
 */
