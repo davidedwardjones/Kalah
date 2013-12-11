@@ -1,5 +1,6 @@
 package MKAgent;
 
+import static MKAgent.MiniMax.makeMove;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.awt.Component;
@@ -41,7 +42,8 @@ public class AlphaBeta
     ourSide = side;
 		MoveEvalScore alpha = new MoveEvalScore(0, Integer.MAX_VALUE);
 		MoveEvalScore beta = new MoveEvalScore(0, Integer.MIN_VALUE);
-    return this.alphabeta(root, depth, side, 0, 0, alpha, beta).getMove();
+    BoardMove bm = new BoardMove(root, side);                
+    return this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();
   }
         
         
@@ -50,36 +52,39 @@ public class AlphaBeta
    *    Alpha - maximising players most favouring game state
    *    Beta - maximising players least favouring game state
    */      
-  private MoveEvalScore alphabeta(Board node, int depth, Side side, int hole, int prevHole, MoveEvalScore alpha, MoveEvalScore beta)
+  private MoveEvalScore alphabeta(BoardMove node, int depth, int hole, int prevHole, MoveEvalScore alpha, MoveEvalScore beta)
   {
     //if depth = 0 or node is a terminal node
-    if(depth == 0 || Kalah.gameOver(node))
+    if(depth == 0 || Kalah.gameOver(node.getBoard()))
     {	
     	//heuristic value of node
-      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));
+      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?node.getSide(): node.getSide().opposite(), hole));
     }
     	
     	//if side == ourSide, initialise bestValue to Integer.MIN_VALUE as we want to find maximum and vice versa.	
 			//MoveEvalScore bestValue = new MoveEvalScore(hole,side.equals(ourSide)?Integer.MIN_VALUE:Integer.MAX_VALUE);
 
       //for each child node
-      int numHoles = node.getNoOfHoles();
+      int numHoles = node.getBoard().getNoOfHoles();
       
-      if(side.equals(ourSide))
+      if(node.getSide().equals(ourSide))
 			{
       	for(int i = 1; i <= numHoles; i++)    //wells start a 1 (0 = scoring well)
       	{
         	//if there are seeds in well, then make a clone
-        	if(node.getSeeds(side, i) > 0)
+        	if(node.getBoard().getSeeds(node.getSide(), i) > 0)
         	{
           	try
           	{
-            	Board child = node.clone();
+            	Board child = node.getBoard().clone();
             	//make the move
-            	Move move = new Move(side, i);
-            	child = makeMove(child, move);
+            	Move move = new Move(node.getSide(), i);
+                
+            	BoardMove boardMove = makeMove(child, move);
             
-	    				alpha = max(alpha, alphabeta(child, depth - 1, side.opposite(), i, hole, alpha, beta));
+                child = boardMove.getBoard();  
+            
+	    				alpha = max(alpha, alphabeta(boardMove, depth - 1, i, hole, alpha, beta));
 	    				if(beta.getScore() >= alpha.getScore())
 	      				break;
 	  				}
@@ -89,7 +94,7 @@ public class AlphaBeta
           	}
 					}
         }
-    		if(node.equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
+    		if(node.getBoard().equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
 					return alpha;
 				else
 					return new MoveEvalScore(hole, alpha.getScore());
@@ -99,16 +104,19 @@ public class AlphaBeta
 				for(int i = 1; i <= numHoles; i++)    //wells start a 1 (0 = scoring well)
       	{
         	//if there are seeds in well, then make a clone
-        	if(node.getSeeds(side, i) > 0)
+        	if(node.getBoard().getSeeds(node.getSide(), i) > 0)
         	{
           	try
           	{
-            	Board child = node.clone();
+            	Board child = node.getBoard().clone();
             	//make the move
-            	Move move = new Move(side, i);
-            	child = makeMove(child, move);
+            	Move move = new Move(node.getSide(), i);
+                
+            	BoardMove boardMove = makeMove(child, move);
+            
+                child = boardMove.getBoard();  
 
-            	beta = min(beta, alphabeta(child, depth - 1, side, i, hole, alpha, beta));
+            	beta = min(beta, alphabeta(boardMove, depth - 1, i, hole, alpha, beta));
 	    				if(beta.getScore() <= alpha.getScore())
 	      				break;
 	  				}
@@ -118,7 +126,7 @@ public class AlphaBeta
           	}
 					}
         }
-    		if(node.equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
+    		if(node.getBoard().equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
 					return beta;
 				else
 					return new MoveEvalScore(hole, beta.getScore());
@@ -158,7 +166,7 @@ public class AlphaBeta
   
   /* MOVE SOMEWHERE ELSE  */
   
-  public static Board makeMove (Board board, Move move)
+  public static BoardMove makeMove (Board board, Move move)
     {
     /* from the documentation:
       "1. The counters are lifted from this hole and sown in anti-clockwise direction, starting
@@ -260,7 +268,15 @@ public class AlphaBeta
       board.addSeedsToStore(collectingSide, seeds);
       }
 
-      return board;
+      Side nextGo;
+      
+      // who's turn is it?
+      if (sowHole == 0)  // the store (implies (sowSide == move.getSide()))
+        nextGo = move.getSide();  // move again
+      else
+        nextGo = move.getSide().opposite();
+
+      return new BoardMove(board,nextGo);
 
     }
   

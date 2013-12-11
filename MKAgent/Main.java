@@ -189,7 +189,7 @@ public class Main
   {
     minimax = new MiniMax(kalah.getBoard());
     
-    moveToMake = minimax.startMiniMax(3, side);
+    moveToMake = minimax.startMiniMax(8, side);
     
     display("MAKE MOVE " + moveToMake);
     
