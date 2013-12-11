@@ -185,11 +185,11 @@ public class Main
   /* 
    * Make a move, using the MiniMax algorithm
    */ 
-  private static void makeMove() throws IOException, InvalidMessageException
+  private static void makeMove()// throws IOException, InvalidMessageException
   {
     alg = new AlphaBeta(kalah.getBoard());
-    //alg = new MiniMax(kalah.getBoard());
-    moveToMake = alg.start(3, side);
+//    alg = new MiniMax(kalah.getBoard());
+    moveToMake = alg.start(2, side);
     
     display("MAKE MOVE " + moveToMake);
     

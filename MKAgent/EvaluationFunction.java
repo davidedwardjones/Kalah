@@ -50,6 +50,8 @@ public class EvaluationFunction
     //if(ourGoAgain)
       //display("Our go again " + hole);
     return (board.getBoard().getSeedsInStore(board.getNextSide()) - board.getBoard().getSeedsInStore(board.getNextSide().opposite())) * 2 + (board.getBoard().getSeedsInPlay(board.getNextSide()) - board.getBoard().getSeedsInPlay(board.getNextSide().opposite())) + (ourGoAgain?1:0);
+//    return (board.getBoard().getSeedsInStore(ourSide) - board.getBoard().getSeedsInStore(ourSide.opposite())) * 2 + (board.getBoard().getSeedsInPlay(ourSide) - board.getBoard().getSeedsInPlay(ourSide.opposite())) + (ourGoAgain?1:0);
+//    return 1;
   }
   
   /*

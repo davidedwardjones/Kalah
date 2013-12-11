@@ -17,14 +17,20 @@ public class BoardMove {
   private Board board;
   private Side nextMove;
   private Side lastMove;
+  private int holeMoved;
   
-  public BoardMove(Board b, Side s1, Side s)
+  public BoardMove(Board b, Side s1, Side s, int hole)
   {
     this.board = b;
     this.nextMove = s;
     this.lastMove = s1;
+    this.holeMoved = hole;
   }
   
+  public int getHoleMoved()
+  {
+    return this.holeMoved;
+  }
   
   public Board getBoard()
   {

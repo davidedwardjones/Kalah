@@ -54,7 +54,7 @@ public class MiniMax extends AbstractAlgorithm
   {
     this.initialDepth = depth;
     ourSide = side;
-    BoardMove bm = new BoardMove(root,side,  side);    
+    BoardMove bm = new BoardMove(root,side,  side, 0);    
     return this.minimax(bm, depth, 0).getMove();
   }
         

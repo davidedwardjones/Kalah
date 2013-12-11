@@ -134,7 +134,7 @@ public abstract class AbstractAlgorithm {
       else
         nextGo = move.getSide().opposite();
 
-      return new BoardMove(board, move.getSide(), nextGo);
+      return new BoardMove(board, move.getSide(), nextGo, move.getHole());
 
     }
   

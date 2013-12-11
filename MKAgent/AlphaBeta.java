@@ -30,7 +30,7 @@ public class AlphaBeta extends AbstractAlgorithm
 
   private static void display(String message)
   {
-    JOptionPane.showMessageDialog(frame, message);
+//    JOptionPane.showMessageDialog(frame, message);
   }
   
   
@@ -42,9 +42,10 @@ public class AlphaBeta extends AbstractAlgorithm
   {
     this.initialDepth = depth;
     ourSide = side;
-    MoveEvalScore alpha = new MoveEvalScore(0, Integer.MIN_VALUE);
-    MoveEvalScore beta = new MoveEvalScore(0, Integer.MAX_VALUE);
-    BoardMove bm = new BoardMove(root, side, side);       
+    evalFunc.setOurSide(side);
+    MoveEvalScore alpha = new MoveEvalScore(1, Integer.MIN_VALUE);
+    MoveEvalScore beta = new MoveEvalScore(1, Integer.MAX_VALUE);
+    BoardMove bm = new BoardMove(root, side, side, -1);     
     //int move = this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();      
     //display("" + move);   
     return this.alphabeta(bm, depth, 0, alpha, beta).getMove();
@@ -149,41 +150,55 @@ public class AlphaBeta extends AbstractAlgorithm
 
   private MoveEvalScore alphabeta(BoardMove node,int depth, int hole, MoveEvalScore alpha, MoveEvalScore beta)
   {
-		//if depth = 0 or node is a terminal node
+    //if depth = 0 or node is a terminal node
     //display("AlphaBeta called \ndepth: " + depth);
     if(depth == 0 || Kalah.gameOver(node.getBoard()))
     {  
       //heuristic value of node
-      return new MoveEvalScore(hole, evalFunc.compareScoringWells(node, ourSide, hole));
+      MoveEvalScore result = new MoveEvalScore(node.getHoleMoved(), evalFunc.compareScoringWells(node, ourSide, hole));
+//      display("End of tree reached " + result + "\nboard:\n" + node.getBoard().toString() + "\n" + 
+//              (node.getBoard().getSeedsInStore(ourSide) + "-" + 
+//              node.getBoard().getSeedsInStore(ourSide.opposite())) + " * 2 + " + 
+//              (node.getBoard().getSeedsInPlay(ourSide) + "-" + 
+//              node.getBoard().getSeedsInPlay(ourSide.opposite())));
+      return result;
     }
 
-		List<BoardMove> children = createChildren(node, depth - 1);
+    List<BoardMove> children = createChildren(node, depth - 1);
 
     if (node.getNextSide().equals(ourSide)) 
     {
       for (BoardMove child : children) 
-			{
-        alpha = max(alpha, alphabeta(node, depth - 1, hole, alpha, beta));
+      {
+        MoveEvalScore temp = alphabeta(child, depth - 1, hole, alpha, beta);
+//        display("MAX alpha " + alpha + "\n\nnew alpha " + temp);
+        alpha = max(alpha, temp);
         if (beta.getScore() <= alpha.getScore())
           break;
       }
-      return new MoveEvalScore(hole, alpha.getScore());
+      MoveEvalScore result = new MoveEvalScore(node.getHoleMoved() == -1 ? alpha.getMove() : node.getHoleMoved(), alpha.getScore());
+      display("Aplha: " + result);
+      return result;
     } 
     else 
     {
       for (BoardMove child : children)
       {
-        beta = min(beta, alphabeta(node, depth - 1, hole, alpha, beta));
+        MoveEvalScore temp = alphabeta(child, depth - 1, hole, alpha, beta);
+//        display("MIN beta " + beta + "\n\nnew beta " + temp);
+        beta = min(beta, temp);
         if (beta.getScore() <= alpha.getScore())
           break;
       }
-      return new MoveEvalScore(hole, beta.getScore());
+      MoveEvalScore result = new MoveEvalScore(node.getHoleMoved() == -1 ? beta.getMove() : node.getHoleMoved(), beta.getScore());
+      display("Beta: " + result);
+      return result;
     }
-	}
+  }
 
   private List<BoardMove> createChildren(BoardMove node, int depth) 
   {
-		int numHoles = node.getBoard().getNoOfHoles();
+    int numHoles = node.getBoard().getNoOfHoles();
 
     List<BoardMove> children = new ArrayList<BoardMove>();
     for(int i = 1; i <= numHoles; i++)    //wells start at 1 (0 = scoring well)
@@ -197,15 +212,15 @@ public class AlphaBeta extends AbstractAlgorithm
           //make the move
           Move move = new Move(node.getNextSide(), i); 
           BoardMove boardMove = makeMove(child, move);
-					children.add(boardMove);
-				}
+          children.add(boardMove);
+        }
         catch(Exception e)
         {
           display(e.toString());
         } 
-			}  
-	  }
-	return children;
+      }  
+    }
+  return children;
   }
 }
 
