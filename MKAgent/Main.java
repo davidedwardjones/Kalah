@@ -188,8 +188,8 @@ public class Main
   private static void makeMove() throws IOException, InvalidMessageException
   {
     alg = new AlphaBeta(kalah.getBoard());
-    alg = new MiniMax(kalah.getBoard());
-    moveToMake = alg.start(2, side);
+    //alg = new MiniMax(kalah.getBoard());
+    moveToMake = alg.start(10, side);
     
     display("MAKE MOVE " + moveToMake);
     
