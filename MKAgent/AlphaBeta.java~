@@ -45,8 +45,8 @@ public class AlphaBeta extends AbstractAlgorithm
     MoveEvalScore alpha = new MoveEvalScore(0, Integer.MIN_VALUE);
     MoveEvalScore beta = new MoveEvalScore(0, Integer.MAX_VALUE);
     BoardMove bm = new BoardMove(root, side, side);       
-    //int move = this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();      
-    //display("" + move);   
+    int move = this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();      
+    display("" + move);   
     return this.alphabeta(bm, depth, 0, alpha, beta).getMove();
   }
         
