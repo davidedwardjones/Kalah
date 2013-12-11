@@ -52,14 +52,14 @@ public class MiniMax
   {
   	this.initialDepth = depth;
         ourSide = side;
-    return this.minimax(root, depth, side, 0, 0).getMove();
+    return this.minimax(root, depth, side, 0).getMove();
   }
         
         
   /*
    *	Recursive minimax algorithm for finding best move to make next, given a starting board (node).
    */      
-  private MoveEvalScore minimax(Board node, int depth, Side side, int hole, int prevHole)
+  private MoveEvalScore minimax(Board node, int depth, Side side, int hole)
   {
     //if depth = 0 or node is a terminal node
     if(depth == 0 || Kalah.gameOver(node))
@@ -84,10 +84,15 @@ public class MiniMax
             Board child = node.clone();
             //make the move
             Move move = new Move(side, i);
-            child = makeMove(child, move);
+            BoardMove boardMove = makeMove(child, move);
             
+            child = boardMove.getBoard();
+            
+            if(side.equals(boardMove.getSide()))
+              display("Our go again");
+           
             //recursively call minimax on child
-            MoveEvalScore val = minimax(child, depth - 1, side.opposite(), i, hole);
+            MoveEvalScore val = minimax(child, depth - 1, side.equals(boardMove.getSide())?side:side.opposite(), i);
             
             //if side == ourSide, find maximum, else find minimum.
             bestValue = side.equals(ourSide)?max(bestValue, val):min(bestValue, val);
@@ -125,7 +130,7 @@ public class MiniMax
   
   /* MOVE SOMEWHERE ELSE  */
   
-  public static Board makeMove (Board board, Move move)
+  public static BoardMove makeMove (Board board, Move move)
     {
     /* from the documentation:
       "1. The counters are lifted from this hole and sown in anti-clockwise direction, starting
@@ -226,8 +231,16 @@ public class MiniMax
         }
       board.addSeedsToStore(collectingSide, seeds);
       }
+      
+      Side nextGo;
+      
+      // who's turn is it?
+      if (sowHole == 0)  // the store (implies (sowSide == move.getSide()))
+        nextGo = move.getSide();  // move again
+      else
+        nextGo = move.getSide().opposite();
 
-      return board;
+      return new BoardMove(board,nextGo);
 
     }
   

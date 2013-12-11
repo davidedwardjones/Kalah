@@ -41,7 +41,7 @@ public class EvaluationFunction
   //step three:
   public int compareScoringWells(Board board, Side side, int hole)
   {
-  	//display(board.getSeedsInStore(side) + " - " + currentBoard.getSeedsInStore(side) + " = " +(board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side)));
+    //display(board.getSeedsInStore(side) + " - " + currentBoard.getSeedsInStore(side) + " = " +(board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side)));
   	  	
     // (our well - opposide well) * scalling factor + (side on our side - side on opposite side)
     return (board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite())) * 2 + (board.getSeedsInPlay(side) - board.getSeedsInPlay(side.opposite()));

@@ -188,7 +188,8 @@ public class Main
   private static void makeMove() throws IOException, InvalidMessageException
   {
     minimax = new MiniMax(kalah.getBoard());
-    moveToMake = minimax.startMiniMax(5, side);
+    
+    moveToMake = minimax.startMiniMax(1, side);
     
     display("MAKE MOVE " + moveToMake);
     
