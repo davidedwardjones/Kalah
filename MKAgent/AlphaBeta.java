@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.awt.Component;
 
-public class AlphaBeta
+public class AlphaBeta extends AbstractAlgorithm
 {
   
   private Board root;
@@ -36,7 +36,8 @@ public class AlphaBeta
 	/*
 	 *	Start the recursive alpha beta minimax algorithm
 	 */
-  public int startAlphaBeta(int depth, Side side)
+  @Override
+  public int start(int depth, Side side)
   {
   	this.initialDepth = depth;
     ourSide = side;
@@ -45,7 +46,7 @@ public class AlphaBeta
     BoardMove bm = new BoardMove(root, side);       
 		//int move = this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();      
 		//display("" + move);   
-    return this.alphabeta(bm, side, depth, 0, 0, alpha, beta).getMove();
+    return this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();
   }
         
         
@@ -54,14 +55,14 @@ public class AlphaBeta
    *    Alpha - maximising players most favouring game state
    *    Beta - maximising players least favouring game state
    */      
-  private MoveEvalScore alphabeta(BoardMove node, Side side, int depth, int hole, int prevHole, MoveEvalScore alpha, MoveEvalScore beta)
+  private MoveEvalScore alphabeta(BoardMove node,int depth, int hole, int prevHole, MoveEvalScore alpha, MoveEvalScore beta)
   {
     //if depth = 0 or node is a terminal node
 		//display("AlphaBeta called \ndepth: " + depth);
     if(depth == 0 || Kalah.gameOver(node.getBoard()))
     {	
     	//heuristic value of node
-      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, side, hole));
+      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, node.getNextSide(), hole));
     }
     	
     	//if side == ourSide, initialise bestValue to Integer.MIN_VALUE as we want to find maximum and vice versa.	
@@ -70,24 +71,22 @@ public class AlphaBeta
       //for each child node
       int numHoles = node.getBoard().getNoOfHoles();
       
-      if(node.getSide().equals(ourSide))
+      if(node.getNextSide().equals(ourSide))
 			{
       	for(int i = 1; i <= numHoles; i++)    //wells start a 1 (0 = scoring well)
       	{
         	//if there are seeds in well, then make a clone
-        	if(node.getBoard().getSeeds(node.getSide(), i) > 0)
+        	if(node.getBoard().getSeeds(node.getNextSide(), i) > 0)
         	{
           	try
           	{
             	Board child = node.getBoard().clone();
             	//make the move
-            	Move move = new Move(node.getSide(), i);
+            	Move move = new Move(node.getNextSide(), i);
                 
             	BoardMove boardMove = makeMove(child, move);
-            
-                child = boardMove.getBoard();  
-            
-	    				alpha = max(alpha, alphabeta(boardMove, boardMove.getSide(), depth - 1, i, hole, alpha, beta));
+                     
+	    				alpha = max(alpha, alphabeta(boardMove, depth - 1, i, hole, alpha, beta));
 	    				if(beta.getScore() != Integer.MAX_VALUE &&  alpha.getScore() != Integer.MIN_VALUE && beta.getScore() >= alpha.getScore())
 	      				break;
 	  				}
@@ -110,19 +109,17 @@ public class AlphaBeta
 				for(int i = 1; i <= numHoles; i++)    //wells start a 1 (0 = scoring well)
       	{
         	//if there are seeds in well, then make a clone
-        	if(node.getBoard().getSeeds(node.getSide(), i) > 0)
+        	if(node.getBoard().getSeeds(node.getNextSide(), i) > 0)
         	{
           	try
           	{
             	Board child = node.getBoard().clone();
             	//make the move
-            	Move move = new Move(node.getSide(), i);
+            	Move move = new Move(node.getNextSide(), i);
                 
             	BoardMove boardMove = makeMove(child, move);
             
-                child = boardMove.getBoard();  
-
-            	beta = min(beta, alphabeta(boardMove, boardMove.getSide(), depth - 1, i, hole, alpha, beta));
+            	beta = min(beta, alphabeta(boardMove, depth - 1, i, hole, alpha, beta));
 							if(beta.getScore() != Integer.MAX_VALUE &&  alpha.getScore() != Integer.MIN_VALUE && beta.getScore() <= alpha.getScore())
 	      				break;
 	  				}

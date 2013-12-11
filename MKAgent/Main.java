@@ -116,7 +116,7 @@ public class Main
   
   private static int halfWayPoint = 49;
   
-  private static AlphaBeta alphabeta;
+  private static AbstractAlgorithm alg;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
@@ -187,8 +187,9 @@ public class Main
    */ 
   private static void makeMove() throws IOException, InvalidMessageException
   {
-    alphabeta = new AlphaBeta(kalah.getBoard());
-    moveToMake = alphabeta.startAlphaBeta(15, side);
+    alg = new AlphaBeta(kalah.getBoard());
+    alg = new MiniMax(kalah.getBoard());
+    moveToMake = alg.start(2, side);
     
     display("MAKE MOVE " + moveToMake);
     

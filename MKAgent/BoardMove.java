@@ -15,12 +15,12 @@ package MKAgent;
 public class BoardMove {
   
   private Board board;
-  private Side side;
+  private Side nextMove;
   
   public BoardMove(Board b, Side s)
   {
     this.board = b;
-    this.side = s;
+    this.nextMove = s;
   }
   
   
@@ -29,8 +29,8 @@ public class BoardMove {
     return this.board;
   }
   
-  public Side getSide()
+  public Side getNextSide()
   {
-    return this.side;
+    return this.nextMove;
   }
 }

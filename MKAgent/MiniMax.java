@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.awt.Component;
 
-public class MiniMax
+public class MiniMax extends AbstractAlgorithm
 {
   
   private Board root;
@@ -29,6 +29,7 @@ public class MiniMax
   
   public MiniMax(Board root)
   {
+    super();
     this.root = root;
     evalFunc = new EvaluationFunction();
   }
@@ -48,7 +49,8 @@ public class MiniMax
 	/*
 	 *	Start the recursive minimax algorithm
 	 */
-  public int startMiniMax(int depth, Side side)
+  @Override
+  public int start(int depth, Side side)
   {
     this.initialDepth = depth;
     ourSide = side;
@@ -66,11 +68,11 @@ public class MiniMax
     if(depth == 0 || Kalah.gameOver(node.getBoard()))
     {	
     	//heuristic value of node
-      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?node.getSide(): node.getSide().opposite(), hole));
+      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?node.getNextSide(): node.getNextSide().opposite(), hole));
     }
     	
     	//if side == ourSide, initialise bestValue to Integer.MIN_VALUE as we want to find maximum and vice versa.	
-      MoveEvalScore bestValue = new MoveEvalScore(hole,node.getSide().equals(ourSide)?Integer.MIN_VALUE:Integer.MAX_VALUE);
+      MoveEvalScore bestValue = new MoveEvalScore(hole,node.getNextSide().equals(ourSide)?Integer.MIN_VALUE:Integer.MAX_VALUE);
 
       //for each child node
       int numHoles = node.getBoard().getNoOfHoles();
@@ -78,13 +80,13 @@ public class MiniMax
       for(int i = 1; i <= numHoles; i++)    //wells start a 1 (0 = scoring well)
       {
         //if there are seeds in well, then make a clone
-        if(node.getBoard().getSeeds(node.getSide(), i) > 0)
+        if(node.getBoard().getSeeds(node.getNextSide(), i) > 0)
         {
           try
           {
             Board child = node.getBoard().clone();
             //make the move
-            Move move = new Move(node.getSide(), i);
+            Move move = new Move(node.getNextSide(), i);
             BoardMove boardMove = makeMove(child, move);
             
             child = boardMove.getBoard();             
@@ -93,7 +95,7 @@ public class MiniMax
             MoveEvalScore val = minimax(boardMove, depth - 1, i);
             
             //if side == ourSide, find maximum, else find minimum.
-            bestValue = node.getSide().equals(ourSide)?max(bestValue, val):min(bestValue, val);
+            bestValue = node.getNextSide().equals(ourSide)?max(bestValue, val):min(bestValue, val);
           }
           catch(Exception e)
           {
