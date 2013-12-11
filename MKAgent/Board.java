@@ -238,8 +238,9 @@ public class Board extends Observable implements Cloneable
     }
 
     /**
-     *Return the total amount of seeds in play 
-     *on the given side
+     *@param side The side we wish to calculate
+     *@return The total amount of seeds in play 
+     *        on the given side
      */
     public int getSeedsInPlay (Side side)
     {
@@ -251,7 +252,7 @@ public class Board extends Observable implements Cloneable
     	  totalInSide+= board[NORTH_ROW][i];
       }else{
         for (int i=1; i <= holes; i++)
-   	  totalInSide+= board[SOUTH_ROW][i];
+   	      totalInSide+= board[SOUTH_ROW][i];
       }
      return totalInSide;
     }
