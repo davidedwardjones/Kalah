@@ -43,7 +43,11 @@ public class MiniMax
   {
     JOptionPane.showMessageDialog(frame, message);
   }
-
+	
+	
+	/*
+	 *	Start the recursive minimax algorithm
+	 */
   public int startMiniMax(int depth, Side side)
   {
   	this.initialDepth = depth;
@@ -51,29 +55,28 @@ public class MiniMax
     return this.minimax(root, depth, side, 0, 0).getMove();
   }
         
+        
+  /*
+   *	Recursive minimax algorithm for finding best move to make next, given a starting board (node).
+   */      
   private MoveEvalScore minimax(Board node, int depth, Side side, int hole, int prevHole)
   {
-  	//display("minimax(" + node.toString() + ", " + depth + ", " + side.toString() + ", " + hole + ", " + prevHole + ")");
-    
-    
     //if depth = 0 or node is a terminal node
     if(depth == 0 || Kalah.gameOver(node))
-    {
-    	//	display("Leaf node: hole = " + hole + ", score = " 
-    	//				+ evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));
-      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));//heuristic value of node
+    {	
+    	//heuristic value of node
+      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?side: side.opposite(), hole));
     }
-    
-    
-//      MoveEvalScore bestValue = /*side.equals(Side.SOUTH)?*/ new MoveEvalScore(hole,Integer.MIN_VALUE);//: new MoveEvalScore(hole,Integer.MAX_VALUE);
+    	
+    	//if side == ourSide, initialise bestValue to Integer.MIN_VALUE as we want to find maximum and vice versa.	
       MoveEvalScore bestValue = new MoveEvalScore(hole,side.equals(ourSide)?Integer.MIN_VALUE:Integer.MAX_VALUE);
 
       //for each child node
       int numHoles = node.getNoOfHoles();
       
-      for(int i = 1; i <= numHoles; i++)    //south side 0-6 are wells, 7 = store
+      for(int i = 1; i <= numHoles; i++)    //wells start a 1 (0 = scoring well)
       {
-        //if there are seeds, then make a clone
+        //if there are seeds in well, then make a clone
         if(node.getSeeds(side, i) > 0)
         {
           try
@@ -85,9 +88,8 @@ public class MiniMax
             
             //recursively call minimax on child
             MoveEvalScore val = minimax(child, depth - 1, side.opposite(), i, hole);
-            //display("depth: " + depth + "  prevHole: " + prevHole + "\n" + root.toString() + "\n" + child.toString()
-            //				+ "\nValue = " + val);
             
+            //if side == ourSide, find maximum, else find minimum.
             bestValue = side.equals(ourSide)?max(bestValue, val):min(bestValue, val);
           }
           catch(Exception e)
@@ -98,11 +100,13 @@ public class MiniMax
       }
     	//display("jksdfhsminimax(" + node.toString() + ", " + depth + ", " + side.toString() + ", " + hole + ", " + prevHole + ")");
     	//display(depth + "\nthis move: " + hole + ", prev move: " + prevHole + "\nBest score = " + bestValue.getScore() + "\nMove: " + bestValue.getMove());
-    	if(node.equals(root))
+    	
+
+    	if(node.equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
     	{
     		return bestValue;
     	}
-    	else
+    	else	//return best score and current hole.
     	{
     		return new MoveEvalScore(hole, bestValue.getScore());
     	}

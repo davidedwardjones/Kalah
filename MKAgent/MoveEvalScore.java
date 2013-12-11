@@ -8,6 +8,12 @@ package MKAgent;
  *
  * @author mbax9yc4
  */
+
+/*
+ * Links a score to a move
+ * Used to remember where the best score has come from when traversing back up 
+ * the game tree in the minimax algorithm.
+ */
 public class MoveEvalScore
 {
 	private int move;

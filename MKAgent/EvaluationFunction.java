@@ -28,7 +28,7 @@ public class EvaluationFunction
   
   public EvaluationFunction()
   {
-//    ourSide = side;
+
   }
   
   public void setOurSide(Side side)
@@ -36,31 +36,27 @@ public class EvaluationFunction
     ourSide = side;
   }
   
-  // step one: higher score on our scoring well
+  //step one: return difference in scoring wells just on our side (child board and root board)
+  //step two: return difference between our scoring well and opponents scoring well in same board.
+  //step three:
   public int compareScoringWells(Board board, Side side, int hole)
   {
   	//display(board.getSeedsInStore(side) + " - " + currentBoard.getSeedsInStore(side) + " = " +(board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side)));
-  	
-  	//display(currentBoard.toString() + "\nside: " + side.toString());
-  	
+  	  	
     // (our well - opposide well) * scalling factor + (side on our side - side on opposite side)
     return (board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite())) * 2 + (board.getSeedsInPlay(side) - board.getSeedsInPlay(side.opposite()));
   }
   
-  
+  /*
+   * returns (our seeds in well + our seeds in play) - (their seeds in well + their seeds in play)
+   */
   public int compareSeedsInPlay(Board board, Side side)
   {
-   return ((board.getSeedsInStore(side)+board.getSeedsInPlay(side)) - (board.getSeedsInStore(side.opposite())+board.getSeedsInPlay(side.opposite())));
+   	return ((board.getSeedsInStore(side)+board.getSeedsInPlay(side)) - (board.getSeedsInStore(side.opposite())+board.getSeedsInPlay(side.opposite())));
   }
 
-
-
-/*  public boolean endsInWell(Side side, int hole)
-* {
-*  	return(currentBoard.getSeeds(side, hole) + hole == currentBoard.getNoOfHoles()+1)? true: false;
-*/  }
-  
-    // if boardLength+1 is returned it means the ending position is the scoring well
+ 
+  // if boardLength+1 is returned it means the ending position is the scoring well
   public Move getEndingPos(Board board, Move toMake)
   {
     Side resultSide = toMake.getSide();
@@ -74,7 +70,9 @@ public class EvaluationFunction
     }
     return new Move(resultSide, result);
   }
+  
 }
+
 /* copy and paste code from here to start the agent
 north
 javac MKAgent/*.java &&java -jar ManKalah.jar "java -jar MKRefAgent.jar" "java MKAgent/RandomAgent"

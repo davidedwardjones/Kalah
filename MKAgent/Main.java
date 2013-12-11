@@ -102,14 +102,13 @@ public class Main
   // kalah contains methods to make making a move easier
   private static Kalah kalah;
   // int for random move
-  private static int randomInt = -1;
+  private static int moveToMake = -1;
   // which side we are on, set as south as default to avoid exception
   // (the first message will tell the agent which side we are on)
   private static Side side = Side.SOUTH;
   // strings for debug use and storing the message (received)
-  private static String before = null, after = null, moved = null, received = null;
+  private static String before = null, after = null, received = null;
   // dont know what this is for yet
-  private static Side sideAfter;
   // info about the move, if game is over, if its your turn again
   // and what move the opposite side just made
   private static Protocol.MoveTurn moveTurn = new Protocol.MoveTurn();
@@ -129,18 +128,20 @@ public class Main
     // read first message to find out which side we are on
     readMessage();
     display("Was side " + side.toString());
+    
+    //if we are first
     if (side.equals(Side.SOUTH))
     {
+      //always make move 2
       kalah.makeMove(new Move(side, 2));
-      // record the state of the moved board this agent believes it is in,
-      // and then compare it later to see if it is corrent
-      moved = kalah.getBoard().toString();
       sendMsg(Protocol.createMoveMsg(2));
+      
       //display("MoveMade");
-      displayInfo(side, received, 2, moveTurn, before, moved, after);
+      displayInfo(side, received, 2, moveTurn, before, kalah.getBoard().toString(), after);
 
       // read reply from server
       readMessage();
+      
       // if opposide side swap
       readMessage();
       if (moveTurn.move == -1)
@@ -148,31 +149,59 @@ public class Main
         // they swapped
         side = side.opposite(); // we swap too
         display("They swapped");
-//        makeMove(); 
       }
     }
-    else
+    else //if second, always swap
     {
       readMessage();
+      
+      //send swap message
       sendMsg(Protocol.createSwapMsg());
       side = side.opposite();
       readMessage();
     }
-     //display("Now side " + side.toString());
+    
+    //display("Now side " + side.toString());
     while (!gameOver)
     {
+      //save board
       before = kalah.getBoard().toString();
       
+      //while not our turn
       while (!moveTurn.again)
       {
         readMessage();
         //display("WHILE MoveTurn.again = false");
-        displayInfo(side, received, randomInt, moveTurn, before, moved, after);
+        displayInfo(side, received, moveToMake, moveTurn, before, kalah.getBoard().toString(), after);
       }
-      // make random move
+      
+      //make a move
       makeMove(); 
+      // read reply from server
+      readMessage();
     }
   }
+  
+  /* 
+   * Make a move, using the MiniMax algorithm
+   */ 
+  private static void makeMove() throws IOException, InvalidMessageException
+  {
+    minimax = new MiniMax(kalah.getBoard());
+    moveToMake = minimax.startMiniMax(5, side);
+    
+    display("MAKE MOVE " + moveToMake);
+    
+    //make the move on our local board
+    kalah.makeMove(new Move(side, moveToMake));
+
+    //send move to engine
+    sendMsg(Protocol.createMoveMsg(moveToMake));
+    //display("MoveMade");
+    displayInfo(side, received, moveToMake, moveTurn, before, kalah.getBoard().toString(), after);
+  }
+  
+  
   
   private static void readMessage() throws IOException, InvalidMessageException
   {
@@ -185,31 +214,13 @@ public class Main
     {
       moveTurn = Protocol.interpretStateMsg(received, kalah.getBoard());
       after = kalah.getBoard().toString();
-//        sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
+//      sideAfter = kalah.makeMove(new Move(side, moveTurn.move));
     }
     else if (Protocol.getMessageType(received).equals(MsgType.END))
       gameOver = true;
     displayMessage(received, moveTurn);
   }
-  
-  // make a random move
-  // for simplicity and predictability the next random move is always this random + 1
-  private static void makeMove() throws IOException, InvalidMessageException
-  {
-    minimax = new MiniMax(kalah.getBoard());
-    randomInt = minimax.startMiniMax(5, side);
-    display("MAKE MOVE " + randomInt);
-    kalah.makeMove(new Move(side, randomInt));
-    // record the state of the moved board this agent believes it is in,
-    // and then compare it later to see if it is corrent
-    moved = kalah.getBoard().toString();
-    sendMsg(Protocol.createMoveMsg(randomInt));
-    //display("MoveMade");
-    displayInfo(side, received, randomInt, moveTurn, before, moved, after);
-    
-    // read reply from server
-    readMessage();
-  }
+
 }
 /* copy and paste code from here to start the agent
 north
