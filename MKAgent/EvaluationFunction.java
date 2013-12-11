@@ -39,12 +39,17 @@ public class EvaluationFunction
   //step one: return difference in scoring wells just on our side (child board and root board)
   //step two: return difference between our scoring well and opponents scoring well in same board.
   //step three:
-  public int compareScoringWells(Board board, Side side, int hole)
+  public int compareScoringWells(BoardMove board, Side side, int hole)
   {
     //display(board.getSeedsInStore(side) + " - " + currentBoard.getSeedsInStore(side) + " = " +(board.getSeedsInStore(side) - currentBoard.getSeedsInStore(side)));
-  	  	
     // (our well - opposide well) * scalling factor + (side on our side - side on opposite side)
-    return (board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite())) * 2 + (board.getSeedsInPlay(side) - board.getSeedsInPlay(side.opposite()));
+    
+    //if board.getSide().equals(side) == true then it's our go again, so add some extra value to heuristic value
+    
+    boolean ourGoAgain = board.getSide().equals(side);
+       
+    return (board.getBoard().getSeedsInStore(side) - board.getBoard().getSeedsInStore(side.opposite())) * 2 + (board.getBoard().getSeedsInPlay(side) - board.getBoard().getSeedsInPlay(side.opposite())) + (ourGoAgain?1:0);
+    
   }
   
   /*
