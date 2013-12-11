@@ -49,7 +49,7 @@ public class EvaluationFunction
     boolean ourGoAgain = board.getSide().equals(side);
     //if(ourGoAgain)
       //display("Our go again " + hole);
-    return (board.getBoard().getSeedsInStore(side) - board.getBoard().getSeedsInStore(side.opposite())) * 2 + (board.getBoard().getSeedsInPlay(side) - board.getBoard().getSeedsInPlay(side.opposite())) + (ourGoAgain?1:0);
+    return (board.getBoard().getSeedsInStore(side) - board.getBoard().getSeedsInStore(side.opposite()))/* * 2 + (board.getBoard().getSeedsInPlay(side) - board.getBoard().getSeedsInPlay(side.opposite())) + (ourGoAgain?1:0)*/;
     
   }
   

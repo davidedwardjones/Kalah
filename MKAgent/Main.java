@@ -116,7 +116,7 @@ public class Main
   
   private static int halfWayPoint = 49;
   
-  private static MiniMax minimax;
+  private static AlphaBeta alphabeta;
   /**
    * The main method, invoked when the program is started.
    * @param args Command line arguments.
@@ -187,9 +187,8 @@ public class Main
    */ 
   private static void makeMove() throws IOException, InvalidMessageException
   {
-    minimax = new MiniMax(kalah.getBoard());
-    
-    moveToMake = minimax.startMiniMax(8, side);
+    alphabeta = new AlphaBeta(kalah.getBoard());
+    moveToMake = alphabeta.startAlphaBeta(15, side);
     
     display("MAKE MOVE " + moveToMake);
     

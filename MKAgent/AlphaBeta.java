@@ -40,10 +40,12 @@ public class AlphaBeta
   {
   	this.initialDepth = depth;
     ourSide = side;
-		MoveEvalScore alpha = new MoveEvalScore(0, Integer.MAX_VALUE);
-		MoveEvalScore beta = new MoveEvalScore(0, Integer.MIN_VALUE);
-    BoardMove bm = new BoardMove(root, side);                
-    return this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();
+		MoveEvalScore alpha = new MoveEvalScore(0, Integer.MIN_VALUE);
+		MoveEvalScore beta = new MoveEvalScore(0, Integer.MAX_VALUE);
+    BoardMove bm = new BoardMove(root, side);       
+		//int move = this.alphabeta(bm, depth, 0, 0, alpha, beta).getMove();      
+		//display("" + move);   
+    return this.alphabeta(bm, side, depth, 0, 0, alpha, beta).getMove();
   }
         
         
@@ -52,13 +54,14 @@ public class AlphaBeta
    *    Alpha - maximising players most favouring game state
    *    Beta - maximising players least favouring game state
    */      
-  private MoveEvalScore alphabeta(BoardMove node, int depth, int hole, int prevHole, MoveEvalScore alpha, MoveEvalScore beta)
+  private MoveEvalScore alphabeta(BoardMove node, Side side, int depth, int hole, int prevHole, MoveEvalScore alpha, MoveEvalScore beta)
   {
     //if depth = 0 or node is a terminal node
+		//display("AlphaBeta called \ndepth: " + depth);
     if(depth == 0 || Kalah.gameOver(node.getBoard()))
     {	
     	//heuristic value of node
-      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, initialDepth % 2 == 0 ?node.getSide(): node.getSide().opposite(), hole));
+      return new MoveEvalScore(hole,evalFunc.compareScoringWells(node, side, hole));
     }
     	
     	//if side == ourSide, initialise bestValue to Integer.MIN_VALUE as we want to find maximum and vice versa.	
@@ -84,8 +87,8 @@ public class AlphaBeta
             
                 child = boardMove.getBoard();  
             
-	    				alpha = max(alpha, alphabeta(boardMove, depth - 1, i, hole, alpha, beta));
-	    				if(beta.getScore() >= alpha.getScore())
+	    				alpha = max(alpha, alphabeta(boardMove, boardMove.getSide(), depth - 1, i, hole, alpha, beta));
+	    				if(beta.getScore() != Integer.MAX_VALUE &&  alpha.getScore() != Integer.MIN_VALUE && beta.getScore() >= alpha.getScore())
 	      				break;
 	  				}
           	catch(Exception e)
@@ -97,7 +100,10 @@ public class AlphaBeta
     		if(node.getBoard().equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
 					return alpha;
 				else
+				{
+					//display("alpha" + depth + "\nhole: " + hole + "\nscore: " + alpha.getScore());
 					return new MoveEvalScore(hole, alpha.getScore());
+				}
 			}
 			else
 			{
@@ -116,8 +122,8 @@ public class AlphaBeta
             
                 child = boardMove.getBoard();  
 
-            	beta = min(beta, alphabeta(boardMove, depth - 1, i, hole, alpha, beta));
-	    				if(beta.getScore() <= alpha.getScore())
+            	beta = min(beta, alphabeta(boardMove, boardMove.getSide(), depth - 1, i, hole, alpha, beta));
+							if(beta.getScore() != Integer.MAX_VALUE &&  alpha.getScore() != Integer.MIN_VALUE && beta.getScore() <= alpha.getScore())
 	      				break;
 	  				}
           	catch(Exception e)
@@ -129,7 +135,10 @@ public class AlphaBeta
     		if(node.getBoard().equals(root))  //if we are returning back to Main, then return best move and the hole it came from.
 					return beta;
 				else
+				{					
+					//display("beta " + depth + "\nhole: " + hole + "\nscore: " + beta.getScore());
 					return new MoveEvalScore(hole, beta.getScore());
+				}
 			}
 
 /*
