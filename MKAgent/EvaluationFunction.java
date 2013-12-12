@@ -46,7 +46,7 @@ public class EvaluationFunction
     
     //if board.getSide().equals(side) == true then it's our go again, so add some extra value to heuristic value
     
-    boolean ourGoAgain = board.getNextSide().equals(board.getLastSide());
+    boolean ourGoAgain = board.isFreeTurn();
     //if(ourGoAgain)
       //display("Our go again " + hole);
     return (board.getBoard().getSeedsInStore(board.getNextSide()) - board.getBoard().getSeedsInStore(board.getNextSide().opposite())) * 2 + (board.getBoard().getSeedsInPlay(board.getNextSide()) - board.getBoard().getSeedsInPlay(board.getNextSide().opposite())) + (ourGoAgain?1:0);

@@ -46,4 +46,12 @@ public class BoardMove {
   {
     return this.lastMove;
   }
+  
+  public boolean isFreeTurn()
+  {
+    if (nextMove.equals(this.lastMove))
+      return true;
+    else
+      return false;
+  }
 }
